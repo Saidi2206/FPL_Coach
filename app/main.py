@@ -12,10 +12,22 @@ from .team import TeamNotFound, UpstreamError, analyze, chips_plan, to_py
 from .tips import build_tips
 
 DATA = Path(os.getenv('FPL_DATA', Path(__file__).parent.parent / 'data' / 'latest.pkl'))
-ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:4200').split(',')
+ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ORIGINS',
+        'http://localhost:4200'
+    ).split(',')
+]
 
 app = FastAPI(title='FPL Coach API')
-app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_methods=['GET'], allow_headers=['*'])
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_methods=['GET'],
+    allow_headers=['*']
+)
 
 _state = {'mtime': 0.0, 'art': None}
 _cache = {}
